@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="./JS/svg_24246_9.712580e56d15259e6e9a4951eec24a78.js"></script>
+  <title>播放器</title>
+  <style>
+    .player .cover {
+      position: fixed;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      z-index: -1;
+
+    }
+
+    .player .cover::after {
+      content: '';
+      position: fixed;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.3);
+    }
+
+    .player .panel {
+      position: fixed;
+      left: 16px;
+      right: 16px;
+      bottom: 60px;
+      height: 160px;
+      background-color: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      border-radius: 24px;
+      padding: 20px;
+
+    }
+
+    .player .title {
+      font-size: 24px;
+      font-weight: bolder;
+
+    }
+
+    .player .author {
+      font-size: 14px;
+      margin-top: 12px;
+    }
+
+    .panel .bar-container {
+      height: 6px;
+      background-color: #a3a3a3;
+      border-radius: 3px;
+      margin-top: 12px;
+    }
+
+    .bar-container .bar {
+      position: relative;
+      height: 100%;
+      width: 0%;
+      background-color: #fff;
+      border-radius: 3px;
+      /* transition: all 1s linear; */
+    }
+
+    .bar-container .bar .ball {
+      position: absolute;
+      right: -6px;
+      top: -3px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background-color: #fff;
+    }
+
+    .panel .duration {
+      margin-top: 10px;
+      display: flex;
+      font-size: 12px;
+    }
+
+    .panel .duration .total {
+      margin-left: auto;
+    }
+
+    .player .control {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .control .iconpark-icon {
+      width: 2em;
+      height: 2em;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .iconpark-icon:hover {
+      opacity: 0.7;
+    }
+
+
+
+    .control .hide {
+      display: none;
+    }
+
+    .control .play {
+      height: 3em;
+      width: 3em;
+    }
+
+    .control .pause-one {
+      height: 3em;
+      width: 3em;
+    }
+
+    .play-cycle,
+    .shuffle-one,
+    .loop-once {
+      display: none;
+    }
+
+
+    .mode.normal .play-cycle {
+      display: block;
+    }
+
+    .mode.cycle .loop-once {
+      display: block;
+    }
+
+    .mode.shuffle .shuffle-one {
+      display: block;
+    }
+
+    .list {
+      position: fixed;
+      left: 0;
+      right: 100px;
+      top: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.7);
+      color: #fff;
+      height: 100vh;
+      transform: translateX(-110%);
+      transition: all .3s;
+    }
+
+    .list.show {
+      transform: translateX(0);
+    }
+
+    .list ul {
+      /* display: flex;
+      flex-direction: column; */
+      margin: 0;
+      padding: 0;
+    }
+
+    .list li {
+      display: flex;
+      list-style: none;
+      background-color: #ccc;
+      padding: 4px 16px;
+      font-size: 24px;
+      align-items: center;
+    }
+
+    .list li:hover {
+      opacity: 0.8;
+      cursor: pointer;
+      border-bottom: 1px solid #777;
+      transition: all .3s;
+    }
+
+    .icon-playing {
+      color: #fff;
+      height: 20px;
+      /* margin-left: 10px; */
+      display: none;
+    }
+
+    .list li.active {
+      background-color: rgba(255, 255, 255, 0.5);
+    }
+
+    @media (min-width) {
+      #root {
+        width: 700px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root">
+    <div class="player">
+      <div class="cover" style="background-image: url(./assets/烦恼歌.jpg);"></div>
+      <div class="panel">
+        <div class="title">烦恼歌</div>
+        <div class="author">张学友</div>
+        <div class="progress">
+          <div class="bar-container">
+            <div class="bar" style="width: 0%;"><span class="ball"></span></div>
+          </div>
+          <div class="duration">
+            <span class="current">0:00</span>
+            <span class="total">4:25</span>
+          </div>
+        </div>
+        <div class="control">
+          <div class="mode normal">
+            <svg class="iconpark-icon play-cycle">
+              <use href="#play-cycle"></use>
+            </svg>
+            <svg class="iconpark-icon shuffle-one ">
+              <use href="#shuffle-one"></use>
+            </svg>
+            <svg class="iconpark-icon loop-once ">
+              <use href="#loop-once"></use>
+            </svg>
+          </div>
+          <svg class="iconpark-icon go-start">
+            <use href="#go-start"></use>
+          </svg>
+          <svg class="iconpark-icon play">
+            <use href="#play"></use>
+          </svg>
+          <svg class="iconpark-icon pause-one hide">
+            <use href="#pause-one"></use>
+          </svg>
+          <svg class="iconpark-icon go-end">
+            <use href="#go-end"></use>
+          </svg>
+          <svg class="iconpark-icon list-top ">
+            <use href="#list-top"></use>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="list">
+      <ul>
+
+      </ul>
+    </div>
+  </div>
+  
+</body>
+
+<script>
+  const audioObject = new Audio()
+  const list = [
+    {
+      "id": "0",
+      "title": "真的吗1",
+      "author": "莫文蔚",
+      "albumn": "我要说I Say",
+      "lyric": "https://jirengu.github.io/data-mock/huawei-music/lyric_真的吗.json",
+      "url": "./assets/莫文蔚-真的吗.mp3",
+      "cover": "./assets/真的吗.jpg"
+    },
+
+    {
+      "id": "1",
+      "title": "水星记2",
+      "author": "郭顶",
+      "albumn": "飞行器的执行周期",
+      "lyric": "https://jirengu.github.io/data-mock/huawei-music/lyric_水星记.json",
+      "url": "./assets/水星记.mp3",
+      "cover": "./assets/水星记.jpg"
+    },
+    {
+      "id": "2",
+      "title": "后来的我们3",
+      "author": "五月天",
+      "albumn": "后来的我们",
+      "lyric": "https://jirengu.github.io/data-mock/huawei-music/lyric_后来的我们.json",
+      "url": "./assets/后来的我们.mp3",
+      "cover": "./assets/后来的我们.jpg"
+    },
+    {
+      "id": "3",
+      "title": "假装4",
+      "author": "陈雪凝",
+      "albumn": "拾陆",
+      "lyric": "https://jirengu.github.io/data-mock/huawei-music/lyric_假装.json",
+      "url": "./assets/假装.mp3",
+      "cover": "./assets/假装.jpg"
+    },
+    {
+      "id": "4",
+      "title": "烦恼歌5",
+      "author": "张学友",
+      "albumn": "在你身边",
+      "lyric": "https://jirengu.github.io/data-mock/huawei-music/lyric_烦恼歌.json",
+      "url": "./assets/烦恼歌.mp3",
+      "cover": "./assets/烦恼歌.jpg"
+    }
+  ]
+  let index = 0
+  let currentAudio = list[index]
+  let clock = null
+
+
+
+
+  const $ = s => document.querySelector(s)
+  // const $$ = s => document.querySelector(s)
+  const $play = $('.play')
+  const $pauseOne = $('.pause-one')
+  const $title = $('.title')
+  const $author = $('.author')
+  const $cover = $('.cover')
+  const $current = $('.current')
+  const $total = $('.total')
+  const $bar = $('.bar')
+  const $goStart = $('.go-start')
+  const $goEnd = $('.go-end')
+  const $barContainer = $('.bar-container')
+  const $ball = $('.bar-container .ball')
+  const $panel = $('.panel')
+  const $mode = $('.mode')
+  const $listTop = $('.list-top')
+  const $list = $('.list')
+  let isDrag = false
+  let modes = ['normal', 'cycle', 'shuffle']  //normal       cycle        shuffle   
+  let modeIdx = 0
+
+
+  $ball.onmouseup = onmouseup
+  $ball.ontouchend = onmouseup
+
+  $ball.ontouchstart = onmousedown
+  $ball.onmousedown = onmousedown
+
+  $panel.onmousemove = onmousemove
+  $panel.ontouchmove = onmousemove
+
+
+  renderList() //渲染播放列表
+
+
+
+  $list.onclick = function (e) {
+    // console.log(e.target.tagName);
+    // console.log(1);
+    if (e.target.tagName === 'LI') {
+      const $$arryLi = [...this.querySelectorAll('li')]
+      $$arryLi.forEach($li => $li.classList.remove('active'))
+      // console.log(e.target);
+      // console.log(1);
+      index = [...this.querySelectorAll('li')].indexOf(e.target)
+      e.target.classList.add('active')
+      // console.log(index)
+      playIndex(index)
+      console.log(1);
+      this.classList.remove('show')
+      console.log(1);
+    }else{
+      this.classList.remove('show')
+    }
+  }
+
+
+
+  $listTop.onclick = function () {
+    $list.classList.toggle('show')
+  }
+
+  $mode.onclick = function () {
+    modeIdx++
+    if (modeIdx >= modes.length) {
+      modeIdx = 0
+    }
+    console.log(modeIdx);
+    // console.log(modes[modeIdx]);
+    this.classList.remove(...modes)
+    // this.classList.remove('normal')
+    // this.classList.remove('shuffle')
+    // this.classList.remove('cycle')
+    this.classList.add(modes[modeIdx])
+  }
+
+  function onmousedown() {
+    // console.log('down');
+    isDrag = true
+  }
+
+  function onmouseup() {
+    console.log('up')
+    // console.log(1)
+    isDrag = false
+  }
+
+  let clock2 = null //优化播放卡顿
+
+  function onmousemove(e) {
+    // console.log('move')
+    if (isDrag) {
+      console.log('drag');
+      let rect = $barContainer.getBoundingClientRect()
+      let clientX = e.touches ? e.touches[0].clientX : e.clientX
+      let offset = clientX - rect.x
+      // console.log(e);
+      let persent = (offset / $barContainer.offsetWidth)
+      console.log(persent)
+      $bar.style.width = persent * 100 + '%'
+      if (clock2) {
+        clearTimeout(clock2)
+      }
+      clock2 = setTimeout(() => {
+        audioObject.currentTime = persent * audioObject.duration
+        // console.log(1);
+      }, 100)
+    }
+  }
+
+
+  audioObject.onended = playNextWithMode
+
+  function playNextWithMode() {
+    switch (modes[modeIdx]) {
+      case 'normal':
+        // console.log('normal');
+        playNext()
+        break
+      case 'cycle':
+        playIndex(index)
+        break
+      case 'shuffle':
+        let newIndex = Math.floor(Math.random() * list.length)
+        playIndex(newIndex)
+    }
+  }
+
+  function playPreWithMode() {
+    switch (modes[modeIdx]) {
+      case 'normal':
+        // console.log('normal');
+        playNext()
+        break
+      case 'cycle':
+        playIndex(index)
+        break
+      case 'shuffle':
+        let newIndex = Math.floor(Math.random() * list.length)
+        playIndex(newIndex)
+    }
+  }
+
+
+  $barContainer.onclick = function (e) {
+    // console.log(e.offsetX)
+    let rect = $barContainer.getBoundingClientRect()
+    let clientX = e.touches ? e.touches[0].clientX : e.clientX
+    let offset = clientX - rect.x
+    // console.log(e);
+    let persent = (offset / $barContainer.offsetWidth)
+    // console.log(persent)
+    $bar.style.width = persent * 100 + '%'
+    audioObject.currentTime = persent * audioObject.duration
+  }
+
+  // const $iconparkIcon = $$('.iconpark-icon')
+  setAudio()
+
+  $play.onclick = function () {
+    // console.log(1)
+    audioObject.play()
+    // console.log(audioObject);
+    // console.log(1)
+    this.classList.add('hide')
+    $pauseOne.classList.remove('hide')
+    clock = setInterval(() => {
+      $current.innerText = secondToMin(audioObject.currentTime)
+      $bar.style.width = (audioObject.currentTime / audioObject.duration) * 100 + '%'
+    }, 1000)
+    // $bar.style.width = audioObject.currentTime / audioObject.duration
+  }
+
+  $pauseOne.onclick = function () {
+    // console.log(1);
+    // console.log(audioObject);
+    audioObject.pause()
+    this.classList.add('hide')
+    $play.classList.remove('hide')
+    // clearInterval(clock)
+  }
+
+  $goEnd.onclick = playNextWithMode
+  $goStart.onclick = playPreWithMode
+
+
+  audioObject.oncanplay = function () {
+    $total.innerText = secondToMin(this.duration)
+  }
+  // 100秒
+  function secondToMin(second) {
+    second = parseInt(second, 10)
+    let min = parseInt(second / 60, 10)
+    let sec = second % 60
+    sec = sec >= 10 ? ` ${sec}` : `0${sec}`
+    return `${min}:${sec}`
+  }
+
+
+  function shouldPlay() {
+    return $play.classList.contains('hide')
+  }
+
+  function setAudio() {
+    audioObject.src = currentAudio.url
+    $title.innerText = currentAudio.title
+    $author.innerText = currentAudio.author
+    $cover.style.backgroundImage = `url(${currentAudio.cover})`
+  }
+
+  function playPre() {
+    index--
+    if (index < 0) {
+      index = list.length - 1
+    }
+    playIndex(index)
+  }
+
+
+  function playNext() {
+    index++
+    if (index >= list.length) {
+      index = 0
+    }
+    playIndex(index)
+  }
+
+  function playIndex(i) {
+    index = i
+    currentAudio = list[index]
+    setAudio()
+    if (shouldPlay()) {
+      audioObject.play()
+    }
+    setListActive()
+  }
+
+  function renderList() {
+    const $ul = document.createElement('ul')
+    const $$doms = list.map((songObj, idx) => {
+      // console.log(songObj);
+      let $li = document.createElement('li')
+      if (idx === index) {
+        $li.classList.add('active')
+      }
+      // $svg = document.createElement('span')
+      // $svg.innerHTML = `<svg class="iconpark-icon icon-playing"><use href="#acoustic"></use></svg>`
+      $li.append((idx + 1) + ' ' + songObj.title)
+      return $li
+    })
+    $ul.append(...$$doms)
+    // console.log($$doms);
+    $list.append($ul)
+
+  }
+
+  function setListActive() {
+    // console.log(1);
+    const $$arryLi = $list.querySelectorAll('li')
+    // console.log($$arryLi);
+    // console.log(1);
+    $$arryLi.forEach($li => $li.classList.remove('active'))
+    $$arryLi[index].classList.add('active')
+  }
+
+</script>
+
+</html>
